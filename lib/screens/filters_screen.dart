@@ -9,8 +9,6 @@ class FiltersScreen extends StatefulWidget {
 
   FiltersScreen(this.currentFilter, this.saveFilters);
 
-  
-
   @override
   _FiltersScreenState createState() => _FiltersScreenState();
 }
@@ -29,8 +27,6 @@ class _FiltersScreenState extends State<FiltersScreen> {
     _vegetarian = widget.currentFilter['vegetarian'];
     super.initState();
   }
-
-  
 
   Widget _buildSwitchListTile(
     String title,
@@ -60,6 +56,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                 'vegan': _vegan,
                 'vegetarian': _vegetarian,
               };
+              print('done');
               widget.saveFilters(_selectedFilters);
             },
             icon: Icon(Icons.save),

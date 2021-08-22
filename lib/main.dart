@@ -5,7 +5,6 @@ import 'package:meals/screens/category_meals_screen.dart';
 import 'package:meals/screens/filters_screen.dart';
 import 'package:meals/screens/meal_detail_screen.dart';
 import 'package:meals/screens/tabs_screen.dart';
-
 import 'models/meal.dart';
 
 void main() {
@@ -19,44 +18,43 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  Widget build(BuildContext context) {
-    // map passing data
-    Map<String,dynamic> _filters = {
-    "gluten":false,
-    "lactose":false,
-    "vegan":false,
-    "vegetarian":false
-  };
+   // map passing data
+    Map<String, dynamic> _filters = {
+      "gluten": false,
+      "lactose": false,
+      "vegan": false,
+      "vegetarian": false
+    };
 
 // It will be send to catagories because it can be updated accoring to filters
     List<Meal> _availableMeals = DUMMY_MEALS;
 
-    void _setFilters(Map <String,dynamic> filterData)
-  {
-    setState(() {
-      _filters = filterData;
-      _availableMeals=DUMMY_MEALS.where((meal) {
-      if(_filters['gluten']==true && !meal.isGlutenFree)
-      {
-        return false;
-      }
-      if(_filters['lactose']==true && !meal.isLactoseFree){
-        return false;
-      }
-      if(_filters['vegan']==true && !meal.isVegan){
-        return false;
-      }
-      if(_filters['vegetarian']==true && !meal.isVegetarian){
-        return false;
-      }
-      return true;
-
-      }).toList();
-    });
-
-  }
-
+    void _setFilters(Map<String, dynamic> filterData) {
+      setState(() {
+        print("8");
+        _filters = filterData;
+        _availableMeals = DUMMY_MEALS.where((meal) {
+          if (_filters['gluten'] == true && !meal.isGlutenFree) {
+            return false;
+          }
+          if (_filters['lactose'] == true && !meal.isLactoseFree) {
+            return false;
+          }
+          if (_filters['vegan'] == true && !meal.isVegan) {
+            return false;
+          }
+          if (_filters['vegetarian'] == true && !meal.isVegetarian) {
+            return false;
+          }
+        // print(_filters['gluten']); 
+          print(_filters['vegetarian']); 
+          return true;
+        }).toList();
+      });
+    }
+  
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'DeliMeals',
@@ -85,7 +83,7 @@ class _MyAppState extends State<MyApp> {
         '/': (ctx) => TabsScreen(),
         CategoryMealsScreen.routeName: (ctx) => CategoryMealsScreen(_availableMeals),
         MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
-        FiltersScreen.routeName: (ctx) => FiltersScreen(_filters,_setFilters),
+        FiltersScreen.routeName: (ctx) => FiltersScreen(_filters, _setFilters),
       },
       onGenerateRoute: (settings) {
         print(settings.arguments);

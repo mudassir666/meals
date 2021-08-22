@@ -18,41 +18,82 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-   // map passing data
-    Map<String, dynamic> _filters = {
-      "gluten": false,
-      "lactose": false,
-      "vegan": false,
-      "vegetarian": false
-    };
+  // map passing data
+  Map<String, dynamic> _filters = {
+    "gluten": false,
+    "lactose": false,
+    "vegan": false,
+    "vegetarian": false
+  };
 
 // It will be send to catagories because it can be updated accoring to filters
-    List<Meal> _availableMeals = DUMMY_MEALS;
+  List<Meal> _availableMeals = DUMMY_MEALS;
 
-    void _setFilters(Map<String, dynamic> filterData) {
+  List<Meal> _favoriteMeals = [];
+
+  void _setFilters(Map<String, dynamic> filterData) {
+    setState(() {
+      print("8");
+      _filters = filterData;
+      _availableMeals = DUMMY_MEALS.where((meal) {
+        if (_filters['gluten'] == true && !meal.isGlutenFree) {
+          return false;
+        }
+        if (_filters['lactose'] == true && !meal.isLactoseFree) {
+          return false;
+        }
+        if (_filters['vegan'] == true && !meal.isVegan) {
+          return false;
+        }
+        if (_filters['vegetarian'] == true && !meal.isVegetarian) {
+          return false;
+        }
+        // print(_filters['gluten']);
+        print(_filters['vegetarian']);
+        return true;
+      }).toList();
+    });
+  }
+
+  // void _toggleFavorite(String mealId) {
+  //   // to remove already existing favorite
+  //   final existingIndex =
+  //       _favoriteMeals.indexWhere((meal) => meal.id == mealId);
+  //   if (existingIndex >= 0) {
+  //     setState(() {
+  //       _favoriteMeals.removeAt(existingIndex);
+  //     });
+  //   } else {
+  //     // it will be added to favorite list
+  //     setState(() {
+  //       _favoriteMeals.add(DUMMY_MEALS.firstWhere((meal) => meal.id == mealId));
+  //     });
+  //   }
+  // }
+
+    void _toggleFavorite(String mealid)
+  {
+    final extistingindex = _favoriteMeals.indexWhere((element) => element.id==mealid);
+    if(extistingindex >= 0)
+    {
       setState(() {
-        print("8");
-        _filters = filterData;
-        _availableMeals = DUMMY_MEALS.where((meal) {
-          if (_filters['gluten'] == true && !meal.isGlutenFree) {
-            return false;
-          }
-          if (_filters['lactose'] == true && !meal.isLactoseFree) {
-            return false;
-          }
-          if (_filters['vegan'] == true && !meal.isVegan) {
-            return false;
-          }
-          if (_filters['vegetarian'] == true && !meal.isVegetarian) {
-            return false;
-          }
-        // print(_filters['gluten']); 
-          print(_filters['vegetarian']); 
-          return true;
-        }).toList();
+       _favoriteMeals.removeAt(extistingindex);
       });
+
     }
-  
+    else{
+      setState(() {
+       _favoriteMeals.add(DUMMY_MEALS.firstWhere((element) => element.id==mealid));
+      });
+      
+    }
+  }
+
+  bool _isMealFavorite(String id) {
+    // checking if i have the id of the favorite meal
+    return _favoriteMeals.any((meal) => meal.id == id);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -80,9 +121,10 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/',
       routes: {
         // '/category-meals' : (ctx) => CategoryMealsScreen(),
-        '/': (ctx) => TabsScreen(),
-        CategoryMealsScreen.routeName: (ctx) => CategoryMealsScreen(_availableMeals),
-        MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
+        '/': (ctx) => TabsScreen(_favoriteMeals),
+        CategoryMealsScreen.routeName: (ctx) =>
+            CategoryMealsScreen(_availableMeals),
+        MealDetailScreen.routeName: (ctx) => MealDetailScreen(_toggleFavorite,_isMealFavorite),
         FiltersScreen.routeName: (ctx) => FiltersScreen(_filters, _setFilters),
       },
       onGenerateRoute: (settings) {
